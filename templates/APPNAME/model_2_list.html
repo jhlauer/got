@@ -1,0 +1,29 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+  <h1>Model_2 List</h1>
+  {% if model_2_list %}
+  <ul>
+    {% for model_2 in model_2_list %}
+      <li>
+          {{ model_2.ATTR }} ({{ model_2.ATTR }})
+          (<a href="{% url 'APPNAME:model_2_update' model_2.id %}">Update</a> |
+          <a href="{% url 'APPNAME:model_2_delete' model_2.id %}">Delete</a>) <br/>
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no model_2's in the library.</p>
+  {% endif %}
+  <p>
+    {% if type_count > 0 %}
+      <a href="{% url 'APPNAME:model_2_create' %}">Add a model_2</a>
+    {% else %}
+      Please add a model_1 before you add a model_2.
+    {% endif %}
+  </p>
+  <p>
+  <a href="{% url 'APPNAM:model_1_list' %}">View model_1's</a> ({{ model_1_count }}) |
+    <a href="{% url 'APPNAM:model_1_create' %}">Add a model_1</a>
+  </p>
+{% endblock %}
