@@ -1,8 +1,18 @@
 from django.forms import ModelForm
-from APPNAME.models import Model_1
+from got.models import House, Culture, Title
 
 # Create the form class.
-class TypeForm(ModelForm):
+class HouseForm(ModelForm):
     class Meta:
-        model = Model_1
+        model = House
+        fields = '__all__'
+
+class CultureForm(ModelForm):
+    class Meta:
+        model = Culture
+        fields = '__all__'
+
+class TitleForm(ModelForm):
+    class Meta:
+        model = Title
         fields = '__all__'

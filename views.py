@@ -3,60 +3,73 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-# from django.http import HttpResponse
-# from django.template.loader import render_to_string
-from APPNAME.models import Model_1, Model_2
-from APPNAME.forms import Model_1Form
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from got.models import House, Character, Culture, Title
+from got.forms import HouseForm, CultureForm, TitleForm
 
 # Create your views here.
 
 class MainView(LoginRequiredMixin, View) :
     def get(self, request):
-        m1c = Model_1.objects.all().count();
-        m2l = Model_2.objects.all();
+        hc = House.objects.all().count()
+        cc = Culture.objects.all().count()
+        tc = Title.objects.all().count()
+        cl = Character.objects.all()
 
-        ctx = { 'model_1_count': tc, 'model2_list': sl };
-        return render(request, 'APPNAME/model2_list.html', ctx)
+        ctx = { 'house_count': hc, 'title_count': tc, 'culture_count': cc, 'character_list': cl }
+        return render(request, 'got/character_list.html', ctx)
 
-class Model_1View(LoginRequiredMixin,View) :
+class HouseView(LoginRequiredMixin,View) :
     def get(self, request):
-        tl = Model_1.objects.all();
-        ctx = { 'model_1_list': tl };
-        return render(request, 'APPNAME/model_1_list.html', ctx)
+        hl = House.objects.all()
+        ctx = { 'house_list': hl }
+        return render(request, 'got/house_list.html', ctx)
 
-# We use reverse_lazy() because we are in "constructor code"
-# that is run before urls.py is cmopletely loaded
-class Model_1Create(LoginRequiredMixin, View):
-    model = Model_1
-    template = 'APPNAME/model_1_form.html'
-    success_url = reverse_lazy('APPNAME:all')
+class CultureView(LoginRequiredMixin,View) :
+    def get(self, request):
+        cl = Culture.objects.all()
+        ctx = { 'culture_list': cl }
+        return render(request, 'got/culture_list.html', ctx)
+
+class TitleView(LoginRequiredMixin,View) :
+    def get(self, request):
+        tl = Title.objects.all()
+        ctx = { 'title_list': tl }
+        return render(request, 'got/title_list.html', ctx)
+
+# House 
+class HouseCreate(LoginRequiredMixin, View):
+    model = House
+    template = 'got/house_form.html'
+    success_url = reverse_lazy('got:all')
     def get(self, request) :
-        form = TypeForm()
+        form = HouseForm()
         ctx = { 'form': form }
         return render(request, self.template, ctx)
 
     def post(self, request) :
-        form = Model_1Form(request.POST)
+        form = HouseForm(request.POST)
         if not form.is_valid() :
             ctx = {'form' : form}
             return render(request, self.template, ctx)
 
-        model_1 = form.save()
+        house = form.save()
         return redirect(self.success_url)
 
-class Model_1Update(LoginRequiredMixin, View):
-    model = Model_1
-    success_url = reverse_lazy('APPNAME:all')
-    template = 'APPNAME/model_1_form.html'
+class HouseUpdate(LoginRequiredMixin, View):
+    model = House
+    success_url = reverse_lazy('got:all')
+    template = 'got/house_form.html'
     def get(self, request, pk) :
-        model_1 = get_object_or_404(self.model, pk=pk)
-        form = Model_1Form(instance=model_1)
+        house = get_object_or_404(self.model, pk=pk)
+        form = HouseForm(instance=house)
         ctx = { 'form': form }
         return render(request, self.template, ctx)
 
     def post(self, request, pk) :
-        model_1 = get_object_or_404(self.model, pk=pk)
-        form = Model_1Form(request.POST, instance = model_1)
+        house = get_object_or_404(self.model, pk=pk)
+        form = HouseForm(request.POST, instance = house)
         if not form.is_valid() :
             ctx = {'form' : form}
             return render(request, self.template, ctx)
@@ -64,34 +77,144 @@ class Model_1Update(LoginRequiredMixin, View):
         form.save()
         return redirect(self.success_url)
 
-class Model_1Delete(LoginRequiredMixin, DeleteView):
-    model = model_1
-    success_url = reverse_lazy('APPNAME:all')
-    template = 'APPNAME/model_1_confirm_delete.html'
+class HouseDelete(LoginRequiredMixin, DeleteView):
+    model = House
+    success_url = reverse_lazy('got:all')
+    template = 'got/house_confirm_delete.html'
 
     def get(self, request, pk) :
-        model_1 = get_object_or_404(self.model, pk=pk)
-        form = Model_1Form(instance=model_1)
-        ctx = { 'model_1': model_1 }
+        house = get_object_or_404(self.model, pk=pk)
+        form = HouseForm(instance=house)
+        ctx = { 'house': house }
         return render(request, self.template, ctx)
 
     def post(self, request, pk) :
-        model_1 = get_object_or_404(self.model, pk=pk)
-        model_1.delete()
+        house = get_object_or_404(self.model, pk=pk)
+        house.delete()
         return redirect(self.success_url)
 
-# Take the easy way out on the main table
-class Model_2Create(LoginRequiredMixin,CreateView):
-    model = model_2
-    fields = '__all__'
-    success_url = reverse_lazy('APPNAME:all')
+# Title
+class TitleCreate(LoginRequiredMixin, View):
+    model = Title
+    template = 'got/title_form.html'
+    success_url = reverse_lazy('got:all')
+    def get(self, request) :
+        form = TitleForm()
+        ctx = { 'form': form }
+        return render(request, self.template, ctx)
 
-class Model_2Update(LoginRequiredMixin, UpdateView):
-    model = model_2
-    fields = '__all__'
-    success_url = reverse_lazy('APPNAME:all')
+    def post(self, request) :
+        form = TitleForm(request.POST)
+        if not form.is_valid() :
+            ctx = {'form' : form}
+            return render(request, self.template, ctx)
 
-class Model_2Delete(LoginRequiredMixin, DeleteView):
-    model = model_2
+        title = form.save()
+        return redirect(self.success_url)
+
+class TitleUpdate(LoginRequiredMixin, View):
+    model = Title
+    success_url = reverse_lazy('got:all')
+    template = 'got/title_form.html'
+    def get(self, request, pk) :
+        title = get_object_or_404(self.model, pk=pk)
+        form = TitleForm(instance=title)
+        ctx = { 'form': form }
+        return render(request, self.template, ctx)
+
+    def post(self, request, pk) :
+        title = get_object_or_404(self.model, pk=pk)
+        form = TitleForm(request.POST, instance = title)
+        if not form.is_valid() :
+            ctx = {'form' : form}
+            return render(request, self.template, ctx)
+
+        form.save()
+        return redirect(self.success_url)
+
+class TitleDelete(LoginRequiredMixin, DeleteView):
+    model = Title
+    success_url = reverse_lazy('got:all')
+    template = 'got/title_confirm_delete.html'
+
+    def get(self, request, pk) :
+        title = get_object_or_404(self.model, pk=pk)
+        form = TitleForm(instance=title)
+        ctx = { 'title': title }
+        return render(request, self.template, ctx)
+
+    def post(self, request, pk) :
+        title = get_object_or_404(self.model, pk=pk)
+        title.delete()
+        return redirect(self.success_url)
+
+# Culture 
+class CultureCreate(LoginRequiredMixin, View):
+    model = Culture
+    template = 'got/culture_form.html'
+    success_url = reverse_lazy('got:all')
+    def get(self, request) :
+        form = CultureForm()
+        ctx = { 'form': form }
+        return render(request, self.template, ctx)
+
+    def post(self, request) :
+        form = CultureForm(request.POST)
+        if not form.is_valid() :
+            ctx = {'form' : form}
+            return render(request, self.template, ctx)
+
+        culture = form.save()
+        return redirect(self.success_url)
+
+class CultureUpdate(LoginRequiredMixin, View):
+    model = Culture
+    success_url = reverse_lazy('got:all')
+    template = 'got/culture_form.html'
+    def get(self, request, pk) :
+        culture = get_object_or_404(self.model, pk=pk)
+        form = CultureForm(instance=culture)
+        ctx = { 'form': form }
+        return render(request, self.template, ctx)
+
+    def post(self, request, pk) :
+        culture = get_object_or_404(self.model, pk=pk)
+        form = CultureForm(request.POST, instance = culture)
+        if not form.is_valid() :
+            ctx = {'form' : form}
+            return render(request, self.template, ctx)
+
+        form.save()
+        return redirect(self.success_url)
+
+class CultureDelete(LoginRequiredMixin, DeleteView):
+    model = Culture
+    success_url = reverse_lazy('got:all')
+    template = 'got/culture_confirm_delete.html'
+
+    def get(self, request, pk) :
+        culture = get_object_or_404(self.model, pk=pk)
+        form = CultureForm(instance=culture)
+        ctx = { 'culture': culture }
+        return render(request, self.template, ctx)
+
+    def post(self, request, pk) :
+        culture = get_object_or_404(self.model, pk=pk)
+        culture.delete()
+        return redirect(self.success_url)
+
+# Character
+class CharacterCreate(LoginRequiredMixin,CreateView):
+    model = Character
     fields = '__all__'
-    success_url = reverse_lazy('APPNAME:all')
+    success_url = reverse_lazy('got:all')
+
+class CharacterUpdate(LoginRequiredMixin, UpdateView):
+    model = Character
+    fields = '__all__'
+    success_url = reverse_lazy('got:all')
+
+class CharacterDelete(LoginRequiredMixin, DeleteView):
+    model = Character
+    fields = '__all__'
+    success_url = reverse_lazy('got:all')
