@@ -1,0 +1,22 @@
+{% extends "base_bootstrap.html" %}
+
+{% block content %}
+  <h1> Model_1 List</h1>
+  {% if model_1_list %}
+  <ul>
+    {% for model_1 in model_1_list %}
+      <li>
+          {{ model_1.name }}
+         (<a href="{% url 'APPNAME:model_1_update' model_1.id %}">Update</a> |
+          <a href="{% url 'APPNAME:model_1_delete' model_1.id %}">Delete</a>)
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>There are no model_1's in the library.</p>
+  {% endif %}
+  <p><a href="{% url 'APPNAME:model_1_create' %}">Add a model_1</a></p>
+  <p>
+    <a href="{% url 'APPNAME:all' %}">Back to APPNAME</a>
+  </p>
+{% endblock %}
